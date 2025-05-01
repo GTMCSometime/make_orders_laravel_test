@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    use Filterable;
     protected $fillable = [
         'customer',
         'created_at',
