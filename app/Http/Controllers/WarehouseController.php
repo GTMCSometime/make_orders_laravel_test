@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\OrderFilter;
+use App\Http\Requests\OrderFilterRequest;
+use App\Http\Resources\WarehouseResource;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -10,9 +13,16 @@ class WarehouseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(OrderFilterRequest $request)
     {
-        //
+        $data = $request->validated();
+        $filter = app()->make(OrderFilter::class, ['queryParams' => array_filter($data)]);
+        $warehouseRequest = Request::filter($filter)->get();
+        if($warehouseRequest->count() > 0) {
+            return WarehouseResource::collection($warehouseRequest);
+        } else {
+            return response()->json(['message' => 'Нет записей'], 200);
+        }
     }
 
     /**

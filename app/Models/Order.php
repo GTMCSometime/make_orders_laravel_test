@@ -13,4 +13,10 @@ class Order extends Model
         'warehouse_id',
         'status',
     ];
+
+    const STATUS = ["active", "completed", "canceled"];
+
+    public function items() {
+        return $this->hasMany(OrderItem::class);
+    }
 }
