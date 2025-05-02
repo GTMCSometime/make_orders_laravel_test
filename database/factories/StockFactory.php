@@ -21,7 +21,7 @@ class StockFactory extends Factory
         return [
             'product_id' => Product::get()->random()->id,
             'warehouse_id' => Warehouse::get()->random()->id,
-            'stock' => rand(0,10),
+            'stock' => rand(1,10),
         ];
     }
 }

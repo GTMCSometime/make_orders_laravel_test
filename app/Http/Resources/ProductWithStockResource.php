@@ -18,7 +18,7 @@ class ProductWithStockResource extends JsonResource
             'id'=> $this->id,
             'name' => $this->name,
             'price' => $this->price,
-            'stock' => $this->stocks->map(function($stock) {
+            'stock' => $this->stock->map(function($stock) {
                 return [
                     'warehouse_id' => $stock->warehouse_id,
                     'warehouse_name'=> $stock->warehouse->name,
