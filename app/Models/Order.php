@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use Filterable;
+
+
+    public $timestamps = false;
+
+
     protected $fillable = [
         'customer',
         'created_at',
@@ -15,8 +20,12 @@ class Order extends Model
         'warehouse_id',
         'status',
     ];
+    
 
-    const STATUS = ["active", "completed", "canceled"];
+    const ACTIVE = 'active';
+    const COMPLETED = 'completed';
+    const CANCELED = 'canceled';
+
 
     public function items() {
         return $this->hasMany(OrderItem::class);

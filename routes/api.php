@@ -7,3 +7,8 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix"=> "orders"], function () {
     Route::get("/", [OrderController::class, "index"])->name("orders.index");
 });
+
+
+Route::group(["prefix"=> "warehouses"], function () {
+    Route::get("/", [WarehouseController::class, "index"])->name("warehouses.index");
+});

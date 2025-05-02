@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductWithStockResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $product = Product::with('stock.warehouse')->get();
+        return ProductWithStockResource::collection($product);
     }
 
     /**
