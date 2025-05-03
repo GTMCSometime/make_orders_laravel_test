@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('customer', 255);
             $table->timestamp('created_at');
             $table->timestamp('completed_at')->nullable();
-            $table->unsignedBigInteger('warehouse_id');
+            $table->foreignId('warehouse_id')->constrained()->onDelete('cascade');
             $table->string('status', 255);
         });
     }

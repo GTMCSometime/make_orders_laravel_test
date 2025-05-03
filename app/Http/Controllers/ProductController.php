@@ -13,7 +13,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::with('stock.warehouse')->get();
+        $product = Product::with('stocks.warehouse')->get();
         return ProductWithStockResource::collection($product);
     }
 

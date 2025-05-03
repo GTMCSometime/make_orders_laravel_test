@@ -28,7 +28,7 @@ class OrderController extends BaseController
         if($orderRequest->count() > 0) {
             return OrderResource::collection($orderRequest);
         } else {
-            return response()->json(['message' => 'Нет записей'], 200);
+            return response()->json(['message' => 'Нет заказов'], 201);
         }
     }
 

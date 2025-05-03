@@ -28,4 +28,9 @@ class Order extends Model
     public function items() {
         return $this->hasMany(OrderItem::class);
     }
+
+
+    public function warehouse() {
+        return $this->belongsTo(Warehouse::class);
+    }
 }

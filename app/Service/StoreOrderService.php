@@ -19,12 +19,29 @@ class StoreOrderService {
             $order = Order::create([
                 'customer' => $data['customer'],
                 'created_at' => now(),
-                'warehouse_id' => Stock::where('product_id', $data['items'][0]['product_id'])->first()->warehouse_id,
+                'warehouse_id' => $data['warehouse_id'],
                 'status' => Order::ACTIVE,
             ]);
 
-            
+
+
             foreach ($data['items'] as $value) {
+                $stock = Stock::where('product_id', $value['product_id'])
+                ->where('warehouse_id', $data['warehouse_id'])
+                ->lockForUpdate()
+                ->first();
+                
+
+                if(!$stock || $stock->stock < $value['count']) {
+                    throw new \Exception('Недостаточно товара на складе!');
+                }
+
+                
+                $stockDiff = $stock->stock -= $value['count'];
+                DB::table('stocks')->where('product_id', $value['product_id'])
+                ->where('warehouse_id', $data['warehouse_id'])->update(['stock' => $stockDiff]);
+
+                
                 $product = Product::findOrFail($value['product_id']);
                 
 
@@ -33,16 +50,7 @@ class StoreOrderService {
                     'product_id'=> $product->id,
                     'count'=> $value['count'],
                     'price'=> $product->price,
-            ]);
-
-            
-            DB::table('stocks')->where('product_id', $value['product_id'])
-            ->update([
-                'stock' => DB::raw("stock - {$value['count']}")
-            ]);
-
-
-                    
+            ]);     
         }
 
 
