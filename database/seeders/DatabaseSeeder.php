@@ -11,8 +11,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        Warehouse::factory()->count(50)->create();
-        Product::factory()->count(100)->create();
-        Stock::factory()->count(100)->create();
+        Warehouse::factory()->count(10)->create();
+        Product::factory()->count(20)->create()->each(function ($product) {
+            Warehouse::all()->each(function ($warehouse) use ($product) {
+                Stock::create([
+                    "product_id"=> $product->id,
+                    "warehouse_id"=> $warehouse->id,
+                    'stock' => rand(1,100),
+                ]);
+        });
+    });
     }
 }

@@ -11,8 +11,6 @@ class Order extends Model
 
 
     public $timestamps = false;
-
-
     protected $fillable = [
         'customer',
         'created_at',
