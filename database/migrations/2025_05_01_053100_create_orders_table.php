@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('customer', 255);
             $table->timestamp('created_at');
-            $table->timestamp('completed_at');
+            $table->timestamp('completed_at')->nullable();
             $table->unsignedBigInteger('warehouse_id');
             $table->string('status', 255);
         });

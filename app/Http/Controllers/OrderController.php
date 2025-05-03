@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Filters\OrderFilter;
 use App\Http\Requests\OrderFilterRequest;
+use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
 
-class OrderController extends Controller
+class OrderController extends BaseController
 {
 
     public function index(OrderFilterRequest $request)
@@ -31,20 +32,20 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        //
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        //
+        $data = $request->validated();
+        $response = $this->service->store($data);
+        return $response;
     }
 
     /**

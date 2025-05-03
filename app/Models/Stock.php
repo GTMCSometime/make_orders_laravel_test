@@ -11,6 +11,8 @@ class Stock extends Model
 
     
     public $timestamps = false;
+    protected $primaryKey = false;
+    public $incrementing = false;
 
 
     protected $fillable = [
