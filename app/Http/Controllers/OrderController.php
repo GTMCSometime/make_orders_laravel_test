@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Filters\OrderFilter;
 use App\Http\Requests\OrderFilterRequest;
 use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
-use Illuminate\Http\Request;
+
 
 
 class OrderController extends BaseController
@@ -44,7 +45,7 @@ class OrderController extends BaseController
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
-        $response = $this->service->store($data);
+        $response = $this->storeService->store($data);
         return $response;
     }
 
@@ -67,9 +68,15 @@ class OrderController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        if($order->status !== Order::ACTIVE) {
+            return response()->json([
+                'error'=> 'Нельзя отменить данный заказ'], 400);
+            }
+        $data = $request->validated();
+        $response = $this->updateService->update($data, $order);
+        return $response;
     }
 
     /**

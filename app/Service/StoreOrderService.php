@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 
-class StoreOrderService {
+class StoreOrderService  {
 
     public function store(array $data) {
         DB::beginTransaction();
@@ -25,36 +25,37 @@ class StoreOrderService {
 
 
 
+            $productIds = collect($data['items'])->pluck('product_id');
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+
             foreach ($data['items'] as $value) {
                 $stock = Stock::where('product_id', $value['product_id'])
                 ->where('warehouse_id', $data['warehouse_id'])
                 ->lockForUpdate()
                 ->first();
                 
-
-                if(!$stock || $stock->stock < $value['count']) {
-                    throw new \Exception('Недостаточно товара на складе!');
+                if ($stock->stock < $value['count']) {
+                    throw new \Exception("Недостаточно товара {$products[$value['product_id']]->name} на складе!");
                 }
 
                 
-                $stockDiff = $stock->stock -= $value['count'];
-                DB::table('stocks')->where('product_id', $value['product_id'])
-                ->where('warehouse_id', $data['warehouse_id'])->update(['stock' => $stockDiff]);
+                DB::table('stocks')
+                ->where('product_id', $value['product_id'])
+                ->where('warehouse_id', $data['warehouse_id'])
+                ->decrement('stock', $value['count']);
 
                 
-                $product = Product::findOrFail($value['product_id']);
-                
-
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id'=> $product->id,
-                    'count'=> $value['count'],
-                    'price'=> $product->price,
-            ]);     
+                    'product_id' => $value['product_id'],
+                    'count' => $value['count'],
+                    'price' => $products[$value['product_id']]->price,
+                ]); 
         }
+        
 
-
-            DB::commit();
+        DB::commit();
 
 
             return response()->json([
@@ -67,8 +68,8 @@ class StoreOrderService {
             
 
             return response()->json([
-                'error' => 'Ошибка',
-                'details' => $exception,
+                'error' => 'Не удалось создать заказ!',
+                'message' => $exception->getMessage(),
             ], 500);
         }
     }
