@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Filters\OrderFilter;
-use App\Http\Requests\OrderFilterRequest;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Requests\Order\OrderFilterRequest;
+use App\Http\Requests\Order\StoreOrderRequest;
+use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 
@@ -34,14 +34,17 @@ class OrderController extends OrderBaseController
     }
 
 
-    public function create()
+    public function resume(Order $order)
     {
-        
+        if($order->status !== Order::CANCELED) {
+            return response()->json([
+                'error'=> 'Нельзя возобновить данный заказ'], 400);
+            }
+        $response = $this->resumeService->resume($order);
+        return $response;        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(StoreOrderRequest $request)
     {
         $data = $request->validated();
@@ -49,9 +52,7 @@ class OrderController extends OrderBaseController
         return $response;
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function cancel(Order $order)
     {
         if($order->status !== Order::ACTIVE) {
@@ -62,9 +63,7 @@ class OrderController extends OrderBaseController
         return $response;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function completion(Order $order)
     {
         if($order->status !== Order::ACTIVE) {
@@ -75,9 +74,7 @@ class OrderController extends OrderBaseController
         return $response;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(UpdateOrderRequest $request, Order $order)
     {
         if($order->status !== Order::ACTIVE) {
@@ -87,13 +84,5 @@ class OrderController extends OrderBaseController
         $data = $request->validated();
         $response = $this->updateService->update($data, $order);
         return $response;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
     }
 }

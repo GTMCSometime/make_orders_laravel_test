@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
                 Stock::create([
                     "product_id"=> $product->id,
                     "warehouse_id"=> $warehouse->id,
-                    'stock' => rand(1,100),
+                    'stock' => rand(0,100),
                 ]);
         });
     });

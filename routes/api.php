@@ -11,6 +11,7 @@ Route::group(["prefix"=> "orders"], function () {
     Route::put("/{order}/update", [OrderController::class, "update"])->name("orders.update");
     Route::put("/{order}/completion", [OrderController::class, "completion"])->name("orders.completion");
     Route::put("/{order}/cancel", [OrderController::class, "cancel"])->name("orders.cancel");
+    Route::put("/{order}/resume", [OrderController::class, "resume"])->name("orders.resume");
 });
 
 
