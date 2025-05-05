@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Order;
 
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
 class CompleteOrderService  {
 
-    public function complete($order) {
+    public function completion($order) {
         DB::beginTransaction();
         try {
             $order->update([

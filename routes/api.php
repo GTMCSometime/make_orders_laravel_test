@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\Route;
 Route::group(["prefix"=> "orders"], function () {
     Route::get("/", [OrderController::class, "index"])->name("orders.index");
     Route::post("/", [OrderController::class, "store"])->name("orders.store");
-    Route::put("/{order}", [OrderController::class, "update"])->name("orders.update");
-    Route::put("/{order}", [OrderController::class, "complete"])->name("orders.complete");
+    Route::put("/{order}/update", [OrderController::class, "update"])->name("orders.update");
+    Route::put("/{order}/completion", [OrderController::class, "completion"])->name("orders.completion");
+    Route::put("/{order}/cancel", [OrderController::class, "cancel"])->name("orders.cancel");
 });
 
 

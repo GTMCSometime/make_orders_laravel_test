@@ -11,7 +11,7 @@ use App\Models\Order;
 
 
 
-class OrderController extends BaseController
+class OrderController extends OrderBaseController
 {
 
     public function index(OrderFilterRequest $request)
@@ -52,21 +52,26 @@ class OrderController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function cancel(Order $order)
     {
-        //
+        if($order->status !== Order::ACTIVE) {
+            return response()->json([
+                'error'=> 'Нельзя завершить данный заказ'], 400);
+            }
+        $response = $this->cancelService->cancel($order);
+        return $response;
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function complete(Order $order)
+    public function completion(Order $order)
     {
         if($order->status !== Order::ACTIVE) {
             return response()->json([
-                'error'=> 'Нельзя отменить данный заказ'], 400);
+                'error'=> 'Нельзя завершить данный заказ'], 400);
             }
-        $response = $this->completeService->complete($order);
+        $response = $this->completeService->completion($order);
         return $response;
     }
 
@@ -75,9 +80,9 @@ class OrderController extends BaseController
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        if($order->status !== Order::ACTIVE || $order->status !== Order::COMPLETED) {
+        if($order->status !== Order::ACTIVE) {
             return response()->json([
-                'error'=> 'Нельзя завершить данный заказ'], 400);
+                'error'=> 'Нельзя обновить данный заказ'], 400);
             }
         $data = $request->validated();
         $response = $this->updateService->update($data, $order);
