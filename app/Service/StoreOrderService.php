@@ -12,9 +12,6 @@ class StoreOrderService  {
 
     public function store(array $data) {
         DB::beginTransaction();
-
-
-
         try {
             $order = Order::create([
                 'customer' => $data['customer'],

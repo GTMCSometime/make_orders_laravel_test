@@ -9,6 +9,7 @@ Route::group(["prefix"=> "orders"], function () {
     Route::get("/", [OrderController::class, "index"])->name("orders.index");
     Route::post("/", [OrderController::class, "store"])->name("orders.store");
     Route::put("/{order}", [OrderController::class, "update"])->name("orders.update");
+    Route::put("/{order}", [OrderController::class, "complete"])->name("orders.complete");
 });
 
 

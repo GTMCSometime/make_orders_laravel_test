@@ -29,7 +29,6 @@ class UpdateOrderService {
 
 
 
-                // 4. Добавить новые позиции и списать stock
                 foreach ($data['items'] as $item) {
                     $stock = Stock::where('product_id', $item['product_id'])
                                   ->where('warehouse_id', $data['warehouse_id'])

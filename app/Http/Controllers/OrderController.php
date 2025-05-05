@@ -60,9 +60,14 @@ class OrderController extends BaseController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Order $order)
+    public function complete(Order $order)
     {
-        //
+        if($order->status !== Order::ACTIVE) {
+            return response()->json([
+                'error'=> 'Нельзя отменить данный заказ'], 400);
+            }
+        $response = $this->completeService->complete($order);
+        return $response;
     }
 
     /**
@@ -70,9 +75,9 @@ class OrderController extends BaseController
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        if($order->status !== Order::ACTIVE) {
+        if($order->status !== Order::ACTIVE || $order->status !== Order::COMPLETED) {
             return response()->json([
-                'error'=> 'Нельзя отменить данный заказ'], 400);
+                'error'=> 'Нельзя завершить данный заказ'], 400);
             }
         $data = $request->validated();
         $response = $this->updateService->update($data, $order);
