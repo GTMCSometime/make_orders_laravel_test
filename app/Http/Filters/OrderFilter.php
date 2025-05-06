@@ -25,27 +25,27 @@ class OrderFilter extends AbstractFilter
             self::STATUS => [$this, 'status'],
         ];
     }
-
+    // фильтрация по имени заказчика
     public function customer(Builder $builder, $value)
     {
         $builder->where('customer',  $value);
     }
-
+    // фильтрация по дате создания
     protected function created_at(Builder $builder, $value) 
     {
         $builder->whereDate('created_at', new Carbon($value));
     }
-
+    // фильтрация по дате завершения
     protected function completed_at(Builder $builder, $value) 
     {
         $builder->whereDate('completed_at', new Carbon($value));
     }
-
+    // фильтрация по ID склада
     public function warehouse_id(Builder $builder, $value)
     {
         $builder->where('warehouse_id',  $value);
     }
-
+    // фильтрация по статусу
     public function status(Builder $builder, $value)
     {
         $builder->where('status',  $value);

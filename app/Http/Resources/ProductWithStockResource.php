@@ -20,9 +20,9 @@ class ProductWithStockResource extends JsonResource
             'price' => $this->price,
             'stock' => $this->stocks->map(function($stock) {
                 return [
-                    'warehouse_id' => $stock->warehouse_id,
-                    'warehouse_name'=> $stock->warehouse->name,
-                    'stock' => $stock->stock,
+                    'warehouse_id' => $stock->warehouse_id, // получаем ID склада
+                    'warehouse_name'=> $stock->warehouse->name, // получаем название склада
+                    'stock' => $stock->stock, // получаем количество товара на складе
                 ];
             }),
         ];

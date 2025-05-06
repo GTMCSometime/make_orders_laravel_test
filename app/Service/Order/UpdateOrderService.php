@@ -2,7 +2,9 @@
 
 namespace App\Service\Order;
 
+use App\Models\Order;
 use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 
 class UpdateOrderService {
@@ -17,6 +19,17 @@ class UpdateOrderService {
                                   ->increment('stock', $oldItem->count);
                     
                 }
+                
+
+                StockMovement::create([
+                    'product_id' => $oldItem->product_id,
+                    'warehouse_id' => $order->warehouse_id,
+                    'count' => $oldItem->count,
+                    'operation' => StockMovement::CANCELED,
+                    'source_type' => Order::class,
+                    'source_id' => $order->id,
+                    'notes' => 'Возврат при отмене заказа. ID:'.$order->id
+                ]);
 
 
                 $order->items()->delete();
@@ -36,7 +49,7 @@ class UpdateOrderService {
                                   ->firstOrFail();
         
                                   if ($stock->stock < $item['count']) {
-                                    throw new \Exception("Недостаточно товара ID: {$item['product_id']} на складе");
+                                    throw new \Exception("Недостаточно товара c ID: {$item['product_id']} на складе. Актуальное количество {$stock->stock}");
                                 }
 
 
@@ -44,6 +57,18 @@ class UpdateOrderService {
                                 ->where('product_id', $item['product_id'])
                                 ->where('warehouse_id', $data['warehouse_id'])
                                 ->decrement('stock', $item['count']);
+
+
+                                StockMovement::create([
+                                    'product_id' => $item['product_id'],
+                                    'warehouse_id' => $data['warehouse_id'],
+                                    'count' => -$item['count'],
+                                    'operation' => StockMovement::STORE,
+                                    'source_type' => Order::class,
+                                    'source_id' => $order->id,
+                                    'notes' => 'Товар заказан. ID:'.$order->id
+                                ]);
+
 
                                 $order->items()->create([
                                     'product_id' => $item['product_id'],

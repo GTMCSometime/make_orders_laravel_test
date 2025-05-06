@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 
 class StoreOrderService  {
@@ -13,6 +14,7 @@ class StoreOrderService  {
     public function store(array $data) {
         DB::beginTransaction();
         try {
+            // создаем заказ
             $order = Order::create([
                 'customer' => $data['customer'],
                 'created_at' => now(),
@@ -21,11 +23,11 @@ class StoreOrderService  {
             ]);
 
 
-
+            // получаем все товары в коллекцию
             $productIds = collect($data['items'])->pluck('product_id');
             $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-
+            // проверяем, можно ли заказать товар
             foreach ($data['items'] as $value) {
                 $stock = Stock::where('product_id', $value['product_id'])
                 ->where('warehouse_id', $data['warehouse_id'])
@@ -41,6 +43,17 @@ class StoreOrderService  {
                 ->where('product_id', $value['product_id'])
                 ->where('warehouse_id', $data['warehouse_id'])
                 ->decrement('stock', $value['count']);
+
+
+                StockMovement::create([
+                    'product_id' => $value['product_id'],
+                    'warehouse_id' => $data['warehouse_id'],
+                    'count' => -$value['count'],
+                    'operation' => StockMovement::STORE,
+                    'source_type' => Order::class,
+                    'source_id' => $order->id,
+                    'notes' => 'Товар заказан. ID:'.$order->id
+                ]);
 
                 
                 OrderItem::create([

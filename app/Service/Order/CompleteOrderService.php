@@ -10,6 +10,7 @@ class CompleteOrderService  {
     public function completion($order) {
         DB::beginTransaction();
         try {
+            // завершаем заказ
             $order->update([
                 'completed_at' => now(),
                 'status' => Order::COMPLETED,

@@ -17,12 +17,12 @@ class Warehouse extends Model
         'name',
     ];
 
-
+    // связь с таблицей Stocks
     public function stocks() {
         return $this->hasMany(Stock::class);
     }
 
-
+    // связь с таблицей Orders
     public function orders() {
         return $this->hasMany(Order::class);
     }

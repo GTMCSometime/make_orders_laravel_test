@@ -16,12 +16,12 @@ class Stock extends Model
         'stock',
     ];
 
-
+    // связь с таблицей Products
     public function product() {
         return $this->belongsTo(Product::class);
     }
 
-
+    // связь с таблицей Warehouses
     public function warehouse() {
         return $this->belongsTo(Warehouse::class);
     }

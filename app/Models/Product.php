@@ -16,7 +16,7 @@ class Product extends Model
         'price',
     ];
 
-
+    // связь с таблицей Stocks
     public function stocks(){
         return $this->hasMany(Stock::class);
     }

@@ -24,12 +24,12 @@ class Order extends Model
     const COMPLETED = 'completed';
     const CANCELED = 'canceled';
 
-
+    // связь с таблицей OrderItems
     public function items() {
         return $this->hasMany(OrderItem::class);
     }
 
-
+    // связь с таблицей Warehouses
     public function warehouse() {
         return $this->belongsTo(Warehouse::class);
     }
