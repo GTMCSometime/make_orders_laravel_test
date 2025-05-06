@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Filterable;
+use App\Http\Filters\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 class StockMovement extends Model

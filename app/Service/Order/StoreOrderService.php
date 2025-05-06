@@ -38,13 +38,13 @@ class StoreOrderService  {
                     throw new \Exception("Недостаточно товара {$products[$value['product_id']]->name} на складе!");
                 }
 
-                
+                // уменьшаем сток
                 DB::table('stocks')
                 ->where('product_id', $value['product_id'])
                 ->where('warehouse_id', $data['warehouse_id'])
                 ->decrement('stock', $value['count']);
 
-
+                // добавляем запись в таблицу перемещений
                 StockMovement::create([
                     'product_id' => $value['product_id'],
                     'warehouse_id' => $data['warehouse_id'],
@@ -55,7 +55,7 @@ class StoreOrderService  {
                     'notes' => 'Товар заказан. ID:'.$order->id
                 ]);
 
-                
+                // добавляем запись в таблицу заказанных товаров
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $value['product_id'],
@@ -64,7 +64,7 @@ class StoreOrderService  {
                 ]); 
         }
         
-
+        // фиксируем
         DB::commit();
 
 
