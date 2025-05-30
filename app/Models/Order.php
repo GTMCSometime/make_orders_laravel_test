@@ -33,4 +33,10 @@ class Order extends Model
     public function warehouse() {
         return $this->belongsTo(Warehouse::class);
     }
+
+
+    public function isCancellable(): bool
+    {
+        return $this->status === self::ACTIVE;
+    }
 }

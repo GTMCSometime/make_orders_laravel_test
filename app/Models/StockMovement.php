@@ -16,6 +16,8 @@ class StockMovement extends Model
         'count',
         'operation',
         'notes',
+        'source_type',
+        'source_id',
     ];
     const STORE = 'store';
     const UPDATE = 'update';
