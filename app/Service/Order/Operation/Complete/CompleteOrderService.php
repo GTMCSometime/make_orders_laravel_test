@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Order;
+namespace App\Service\Order\Operation\Complete;
 
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
@@ -15,23 +15,11 @@ class CompleteOrderService  {
                 'completed_at' => now(),
                 'status' => Order::COMPLETED,
             ]);
-        
-
         DB::commit();
-
-
-            return response()->json( [
-                'message' => 'Заказ завершен',
-                'order' => $order,
-            ], 201);
-
+        return $order;
         } catch(\Exception $exception) {
-
             DB::rollBack();
-            return response()->json([
-                'error' => 'Не удалось завершить заказ!',
-                'message' => $exception->getMessage(),
-            ], 500);
+            throw $exception;
         }
     }
 }
