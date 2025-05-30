@@ -28,7 +28,8 @@ class OrderController extends OrderBaseController
         
         // проверка, есть ли заказы
         if($orderRequest->count() > 0) {
-            return OrderResource::collection($orderRequest);
+            return response()->json([
+                OrderResource::collection($orderRequest)]);
         } else {
             return response()->json(['message' => 'Нет заказов'], 201);
         }
@@ -37,67 +38,113 @@ class OrderController extends OrderBaseController
 
     public function resume(Order $order)
     {
-        // проверка. Можно возобновить только отмененный заказ
-        if($order->status !== Order::CANCELED) {
+        try {
+            // проверка. Можно возобновить только отмененный заказ
+            if($order->status !== Order::CANCELED) {
             return response()->json([
                 'error'=> 'Нельзя возобновить данный заказ'], 400);
             }
 
-        // основная логика перенесена в сервис
-        $response = $this->resumeService->resume($order);
-        return $response;        
+            // основная логика перенесена в сервис
+            $response = $this->resumeService->resume($order);
+            return response()->json([
+                'message' => 'Заказ возобновлен',
+                'data' => $response,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'Ошибка при возобновлении заказа',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }        
     }
 
 
     public function store(StoreOrderRequest $request)
     {
-        $data = $request->validated();
-        // основная логика перенесена в сервис
-        $response = $this->storeService->store($data);
-        return $response;
+        try {
+            $data = $request->validated();
+            // основная логика перенесена в сервис
+            $response = $this->storeService->store($data);
+            return response()->json([
+                'message' => 'Заказ создан',
+                'data' => $response,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'Ошибка при оформлении заказа',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 
 
     public function cancel(Order $order)
     {
-        // если заказ неактивен, то его нельзя отменить 
-        if($order->status !== Order::ACTIVE) {
+        try {
+            if(!$order->isCancellable()) {
+                return response()->json([
+                    'error' => 'Нельзя отменить данный заказ'],
+                     422);
+                }
+            // основная логика перенесена в сервис
+            $response = $this->cancelService->cancel($order);
             return response()->json([
-                'error'=> 'Нельзя отменить данный заказ'], 400);
-            }
-
-        // основная логика перенесена в сервис
-        $response = $this->cancelService->cancel($order);
-        return $response;
+                'message' => 'Заказ отменен',
+                'data' => $response,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'Ошибка при отмене',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 
 
     public function completion(Order $order)
     {
-        // если заказ неактивен, то его нельзя завершить
-        if($order->status !== Order::ACTIVE) {
+        try {
+            if(!$order->isCancellable()) {
+                return response()->json([
+                    'error' => 'Нельзя завершить данный заказ'],
+                     422);
+                }
+            // основная логика перенесена в сервис
+            $response = $this->completeService->completion($order);
             return response()->json([
-                'error'=> 'Нельзя завершить данный заказ'], 400);
-            }
-
-        // основная логика перенесена в сервис
-        $response = $this->completeService->completion($order);
-        return $response;
+                'message' => 'Заказ завершен',
+                'data' => $response,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'Ошибка при завершинии заказа',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 
 
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        // если заказ неактивен, то его нельзя обновить
-        if($order->status !== Order::ACTIVE) {
+        try {
+            if(!$order->isCancellable()) {
+                return response()->json([
+                    'error' => 'Нельзя обновить данный заказ'],
+                     422);
+                }
+            $data = $request->validated();    
+            // основная логика перенесена в сервис
+            $response = $this->updateService->update($data, $order);
             return response()->json([
-                'error'=> 'Нельзя обновить данный заказ'], 400);
-            }
-
-            
-        $data = $request->validated();
-        // основная логика перенесена в сервис
-        $response = $this->updateService->update($data, $order);
-        return $response;
+                'message' => 'Заказ обновлен',
+                'data' => $response,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error' => 'Ошибка при обновлении заказа',
+                'message' => $exception->getMessage(),
+            ], 500);
+        }
     }
 }

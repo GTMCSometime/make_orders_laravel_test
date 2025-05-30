@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductWithStockResource;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -12,6 +11,8 @@ class ProductController extends Controller
     {
         // просмотр продуктов, с их остатками по складам
         $product = Product::with('stocks.warehouse')->get();
-        return ProductWithStockResource::collection($product);
+        return response()->json(
+            ProductWithStockResource::collection($product)
+        );
     }
 }

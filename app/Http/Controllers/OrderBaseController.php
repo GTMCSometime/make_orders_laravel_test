@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Service\Order\CancelOrderService;
-use App\Service\Order\CompleteOrderService;
-use App\Service\Order\ResumeOrderService;
-use App\Service\Order\StoreOrderService;
-use App\Service\Order\UpdateOrderService;
+use App\Service\Order\Operation\Cancel\CancelOrderService;
+use App\Service\Order\Operation\Complete\CompleteOrderService;
+use App\Service\Order\Operation\Resume\ResumeOrderService;
+use App\Service\Order\Operation\Store\StoreOrderService;
+use App\Service\Order\Operation\Update\UpdateOrderService;
 
 abstract class OrderBaseController extends Controller
 {
